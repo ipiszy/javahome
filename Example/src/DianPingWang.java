@@ -83,7 +83,6 @@ public class DianPingWang {
 	static final int SIZE=400;
 		
 	public static long query(RandomAccessFile dianping, String nameTemp) throws IOException, ClassNotFoundException{
-		boolean flag=false;
 		long pos=-1;
 		long length=dianping.length();
 		Instance instance;
@@ -91,7 +90,6 @@ public class DianPingWang {
 			instance=Instance.readObject(i, dianping);
 			if (instance.delete==false)
 				if (instance.name.equals(nameTemp)){
-					flag=true;
 					pos=i;
 					break;				
 				}
