@@ -1,0 +1,249 @@
+package Parse;
+import Absyn.*;
+import Symbol.*;
+
+action code {: static Symbol sym(String s) {
+	         return Symbol.symbol(s);
+	        }
+	    :};
+
+parser code  {: 
+  public Exp parseResult;
+  Lexer lexer;
+
+  public void syntax_error(java_cup.runtime.Symbol current) {
+   report_error("Syntax error (" + current.sym + ")", current);
+  }
+
+  ErrorMsg.ErrorMsg errorMsg;
+
+  public void report_error(String message, 
+			   java_cup.runtime.Symbol info) {
+      errorMsg.error(info.left, message);
+  }
+
+  public Grm(Lexer l, ErrorMsg.ErrorMsg err) {
+    this();
+    errorMsg=err;
+    lexer=l;
+  }
+:};
+
+scan with {: return lexer.nextToken(); :};
+
+terminal String ID, STRING;
+terminal String INT;
+
+terminal PLUS, MINUS, 
+	TIMES, DIVIDE, EQ, NEQ, LT, LE, GT, GE, AND, OR;
+	
+terminal COMMA, COLON, SEMICOLON, LPAREN, RPAREN, 
+	LBRACK, RBRACK, LBRACE, RBRACE, DOT,  
+	ASSIGN, ARRAY, IF, THEN, ELSE, WHILE, FOR, TO, DO, 
+	LET, IN, END, OF, BREAK, NIL, FUNCTION, VAR, TYPE, UMINUS;
+
+non terminal program;
+non terminal Exp expr;
+non terminal ExpList expr_list;
+non terminal SeqExp expr_seq;
+non terminal FieldExpList field_list;
+
+non terminal Var lvalue;
+
+non terminal Dec declaration;
+non terminal FunctionDec function_declaration;
+non terminal TypeDec type_declaration;
+non terminal VarDec variable_declaration;
+non terminal DecList declaration_list;
+
+non terminal Integer binary_operator;
+
+non terminal Ty type;
+non terminal FieldList type_field,type_fields;
+
+non terminal ArrayId array_id;
+	
+precedence right LBRACK;
+precedence right ELSE;
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence nonassoc EQ, NEQ, GT, LT, GE, LE;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence left UMINUS;
+
+
+start with program;
+
+program ::= expr:e {:	System.out.println("start program.");
+						new Print(System.out).prExp(e,5);
+						RESULT = e;:}
+;
+
+array_id ::=ID:id LBRACK expr:e RBRACK
+			{:RESULT = new ArrayId(idleft,e,id);:}
+;
+
+expr ::= STRING:s 
+			{:RESULT = new StringExp(sleft, s);:}
+|INT:i 	
+			{:RESULT = new IntExp(ileft, Integer.parseInt(i));:}
+|NIL:n	
+			{:RESULT = new NilExp(nleft);:}
+|lvalue:lv	
+			{:RESULT = new VarExp(lvleft,lv);:}	
+|MINUS:m expr:e 
+			{:RESULT = new OpExp(mleft,new IntExp(mright,0),OpExp.MINUS,e);:}
+			%prec UMINUS 
+|expr:e1 binary_operator:o expr:e2	
+			{:RESULT = new OpExp(e1left,e1,o.intValue(),e2);:}									
+|lvalue:lv ASSIGN expr:e
+			{:RESULT = new AssignExp(lvleft,lv,e);:}
+|ID:id LPAREN expr_list:el RPAREN
+			{:RESULT = new CallExp(idleft,Symbol.symbol(id),el);:}
+|ID:id LPAREN RPAREN
+			{:RESULT = new CallExp(idleft,Symbol.symbol(id),null);:}
+|LPAREN:lp expr_seq:es RPAREN
+			{:RESULT = new SeqExp(lpleft, es.list);:}
+|LPAREN:lp RPAREN
+			{:RESULT = new SeqExp(lpleft,null);:}
+|ID:tyid LBRACE field_list:fl RBRACE
+			{:RESULT = new RecordExp(tyidleft,Symbol.symbol(tyid),fl);:}
+|ID:tyid LBRACE RBRACE
+			{:RESULT = new RecordExp(tyidleft,Symbol.symbol(tyid),null);:}
+|array_id:aid OF expr:e2
+			{:RESULT = new ArrayExp(aidleft,Symbol.symbol(aid.arrayId),aid.exp,e2);:}
+|IF:ifexp expr:e1 THEN expr:e2
+			{:RESULT = new IfExp(ifexpleft,e1,e2);:}
+|IF:ifexp expr:e1 THEN expr:e2 ELSE expr:e3
+			{:RESULT = new IfExp(ifexpleft,e1,e2,e3);:}
+|WHILE:whileexp expr:e1 DO expr:e2
+			{:RESULT = new WhileExp(whileexpleft,e1,e2);:}
+|FOR:forexp ID:id ASSIGN expr:exp1 TO expr:exp2 DO expr:exp3
+			{:RESULT = new ForExp(forexpleft,
+								new VarDec(idleft,
+											Symbol.symbol(id),
+											new NameTy(idleft,Symbol.symbol("int")),
+											exp1),
+								exp2,
+								exp3);
+			:}
+|BREAK:breakexp
+			{:RESULT = new BreakExp(breakexpleft);:}
+|LET:letexp declaration_list:dl IN expr_seq:es END
+			{:RESULT = new LetExp(letexpleft,dl,es);:}
+|LET:letexp declaration_list:dl IN END
+			{:RESULT = new LetExp(letexpleft,dl,new SeqExp(dlright,null));:}
+;
+
+expr_seq ::= expr:e
+			{:RESULT = new SeqExp(eleft,new ExpList(e,null));:}
+|expr_seq:es SEMICOLON expr:e
+			{:RESULT = new SeqExp(esleft,new ExpList(e,es.list));:}
+;
+
+expr_list ::=expr:e
+			{:RESULT = new ExpList(e,null);:}
+|expr_list:el COMMA expr:e
+			{:RESULT = new ExpList(e,el);:}
+;
+
+field_list ::= ID:id EQ expr:e
+			{:RESULT = new FieldExpList(idleft,Symbol.symbol(id),e,null);:}
+|field_list:fl COMMA ID:id EQ expr:e
+			{:RESULT = new FieldExpList(flleft,Symbol.symbol(id),e,fl);:}
+;
+
+lvalue ::=ID:id
+			{:RESULT = new SimpleVar(idleft,Symbol.symbol(id));:}
+|lvalue:lv DOT ID:id
+			{:RESULT = new FieldVar(lvleft, lv, Symbol.symbol(id));:} 
+|lvalue:lv LBRACK expr:e RBRACK
+			{:RESULT = new SubscriptVar(lvleft,lv,e);:}
+|array_id:aid
+			{:RESULT = new SubscriptVar(aidleft,new SimpleVar(aid.pos,Symbol.symbol(aid.arrayId)),aid.exp);:}
+;
+
+binary_operator ::=PLUS
+			{:RESULT = OpExp.PLUS;:}
+|MINUS
+			{:RESULT = OpExp.MINUS;:}
+|TIMES
+			{:RESULT = OpExp.MUL;:}
+|DIVIDE
+			{:RESULT = OpExp.DIV;:}
+|EQ
+			{:RESULT = OpExp.EQ;:}
+|NEQ
+			{:RESULT = OpExp.NE;:}
+|LT
+			{:RESULT = OpExp.LT;:}
+|GT
+			{:RESULT = OpExp.GT;:}
+|LE
+			{:RESULT = OpExp.LE;:}
+|GE
+			{:RESULT = OpExp.GE;:}
+|AND
+			{:RESULT = OpExp.AND;:}
+|OR
+			{:RESULT = OpExp.OR;:}
+;
+
+
+declaration_list ::=declaration:de
+			{:RESULT = new DecList(de,null);:}
+|declaration_list:del declaration:de
+			{:RESULT = new DecList(de,del);:}
+;
+
+declaration ::=type_declaration:tde
+			{:RESULT = tde;:}
+|variable_declaration:vde
+			{:RESULT = vde;:}
+|function_declaration:fde
+			{:RESULT = fde;:}
+;
+
+type_declaration ::=TYPE:t ID:tyid EQ type:ty
+			{:RESULT = new TypeDec(tleft,Symbol.symbol(tyid),ty,null);:}
+;
+
+type ::=ID:tyid
+			{:RESULT = new NameTy(tyidleft,Symbol.symbol(tyid));:}
+|LBRACE:lb type_fields:tyf RBRACE
+			{:RESULT = new RecordTy(lbleft,tyf);:}
+|LBRACE:lb RBRACE
+			{:RESULT = new RecordTy(lbleft,null);:}
+|ARRAY:arr OF ID:tyid
+			{:RESULT = new ArrayTy(arrleft,Symbol.symbol(tyid));:}
+;
+
+type_fields ::=type_field:tf
+			{:RESULT = tf;:}
+|type_fields:tfs COMMA type_field:tf
+			{:RESULT = new FieldList(tfsleft,tf.name,tf.typ,tfs);:}
+;
+
+type_field ::=ID:id COLON ID:tyid
+			{:RESULT = new FieldList(idleft,Symbol.symbol(id),Symbol.symbol(tyid),null);:}
+;
+
+
+variable_declaration ::=VAR:v ID:id ASSIGN expr:e
+			{:RESULT = new VarDec(vleft,Symbol.symbol(id),null,e);:}
+|VAR:v ID:id COLON ID:tyid ASSIGN expr:e
+			{:RESULT = new VarDec(vleft,Symbol.symbol(id),new NameTy(tyidleft,Symbol.symbol(tyid)),e);:}
+;
+
+function_declaration ::=FUNCTION:f ID:id LPAREN type_fields:tfs RPAREN EQ expr:e
+			{:RESULT = new FunctionDec(fleft,Symbol.symbol(id),tfs,null,e,null);:}
+|FUNCTION:f ID:id LPAREN RPAREN EQ expr:e
+			{:RESULT = new FunctionDec(fleft,Symbol.symbol(id),null,null,e,null);:}			
+|FUNCTION:f ID:id LPAREN type_fields:tfs RPAREN COLON ID:tyid EQ expr:e
+			{:RESULT = new FunctionDec(fleft,Symbol.symbol(id),tfs,new NameTy(tyidleft,Symbol.symbol(tyid)),e,null);:}
+|FUNCTION:f ID:id LPAREN RPAREN COLON ID:tyid EQ expr:e
+			{:RESULT = new FunctionDec(fleft,Symbol.symbol(id),null,new NameTy(tyidleft,Symbol.symbol(tyid)),e,null);:}
+         ;
+
