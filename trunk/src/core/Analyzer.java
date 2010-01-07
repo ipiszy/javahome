@@ -118,6 +118,7 @@ public class Analyzer {
 		text=text+" Src. HW Address : "+packet.getSourceHwAddress()+"\tDst. HW Address : "+packet.getDestinationHwAddress()+"\n";
 		text=text+" Timeval : "+packet.getTimeval()+"\n";
 		text=text+" Ethernet Protocol : "+Analyzer.getEthernetProtocol(packet.getEthernetProtocol())+"(0x"+byteToHex(packet.getEthernetProtocol(),4)+")\n";
+		text+= "Ethernet Packet Header Length : " + packet.getEthernetHeaderLength() + "\tEthernet Packet Data Length : " + packet.getEthernetData().length + "\n";
 		return text;
 	}
 	public static String TCPInform(TCPPacket packet){
@@ -128,6 +129,7 @@ public class Analyzer {
 		text=text+" Check Sum : "+packet.getChecksum()+"\t\tWindow Size : "+packet.getWindowSize()+"\n\n";
 		text=text+" Ack : "+packet.isAck()+"\t\tFin : "+packet.isFin()+"\t\tPsh : "+packet.isPsh()+"\n";
 		text=text+" Rst : "+packet.isRst()+"\t\tSyn : "+packet.isSyn()+"\t\tUrg : "+packet.isUrg()+"\n";
+		text+= "TCP Packet Header Length : " + packet.getTCPHeaderLength() + "\tTCP Packet Data Length : " + packet.getTCPData().length + "\n";
 		return text;
 	}
 	public static String IPInform(IPPacket packet){
@@ -138,6 +140,7 @@ public class Analyzer {
 		text=text+" IP Packet ID : "+packet.getId()+"\t\tVersion : "+getIPVersion(packet.getVersion())+"\n";
 		text=text+" Type of Service : "+getTypeOfService(packet.getTypeOfService())+"(0x"+byteToHex(packet.getTypeOfService(),4)+")"+"\n";
 		text=text+" IP Protocol : "+IPProtocol.getDescription(packet.getIPProtocol())+"\n";
+		text+= "IP Packet Header Length : " + packet.getIPHeaderLength() + "\tIP Packet Data Length : " + packet.getIPData().length + "\n";
 		return text;
 	}
 	public static String UDPInform(UDPPacket packet){
@@ -150,6 +153,7 @@ public class Analyzer {
 		String text="";
 		text=text+" Message Major Code : "+packet.getMessageMajorCode()+"\t\tMessage Minor Code : "+packet.getMessageMinorCode()+"\n";
 		text=text+" Message : "+ICMPMessage.getDescription(packet.getMessageCode())+"("+packet.getMessageCode()+")"+"\t\tCheck Sum : "+packet.getICMPChecksum()+"\n";
+		text+= "ICMP Packet Header Length : " + packet.getICMPHeader().length + "\tICMP Packet Data Length : " + packet.getICMPData().length + "\n";
 		return text;
 	}
 	public static String IGMPInform(IGMPPacket packet){
@@ -164,6 +168,7 @@ public class Analyzer {
 		text=text+" Src. HW Address : "+packet.getSourceHwAddress()+"\tDst. HW Address : "+packet.getDestinationHwAddress()+"\n";
 		text=text+" Src. Protocol Address : "+packet.getSourceProtoAddress()+"\tDst. Protocol Address : "+packet.getDestinationProtoAddress()+"\n";
 		text=text+" Operation : "+getARPOperation(packet.getOperation())+"\n";
+		text+= "ARP Packet Header Length : " + packet.getARPHeader().length + "\tARP Packet Data Length : " + packet.getARPData().length + "\n";
 		return text;
 	}
 	public static String getEthernetProtocol(int protocol){
