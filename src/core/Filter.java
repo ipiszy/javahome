@@ -21,7 +21,7 @@ public abstract class Filter {
 			if (!left.initCondition(parts[0]))
 				return null;
 			StandardPacketFilter right = new StandardPacketFilter();
-			if (!right.initCondition(parts[0]))
+			if (!right.initCondition(parts[1]))
 				return null;
 			AndFilter f = new AndFilter(left, right);
 			return f;
@@ -32,7 +32,7 @@ public abstract class Filter {
 			if (!left.initCondition(parts[0]))
 				return null;
 			StandardPacketFilter right = new StandardPacketFilter();
-			if (!right.initCondition(parts[0]))
+			if (!right.initCondition(parts[1]))
 				return null;
 			OrFilter f = new OrFilter(left, right);
 			return f;
