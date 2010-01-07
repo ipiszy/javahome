@@ -35,8 +35,8 @@ public class PacketInformationPanel extends javax.swing.JPanel {
     {
 	    //clear all
 	    ethernetHeaderInfoTextArea.setText("");
-	    ethernetHeaderDataTextArea.setText("");
 	    ethernetDataTextArea.setText("");
+	    ethernetHeaderDataTextArea.setText("");
 	    ipHeaderInfoTextArea.setText("");
 	    ipHeaderDataTextArea.setText("");
 	    ipDataTextArea.setText("");
@@ -108,10 +108,10 @@ public class PacketInformationPanel extends javax.swing.JPanel {
         ethernetHeaderInfoTextArea = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        ethernetHeaderDataTextArea = new javax.swing.JTextArea();
+        ethernetDataTextArea = new javax.swing.JTextArea();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        ethernetDataTextArea = new javax.swing.JTextArea();
+        ethernetHeaderDataTextArea = new javax.swing.JTextArea();
         ipInfoPanel = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
@@ -174,12 +174,12 @@ public class PacketInformationPanel extends javax.swing.JPanel {
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
-        ethernetHeaderDataTextArea.setColumns(20);
-        ethernetHeaderDataTextArea.setEditable(false);
-        ethernetHeaderDataTextArea.setFont(resourceMap.getFont("ethernetHeaderDataTextArea.font")); // NOI18N
-        ethernetHeaderDataTextArea.setRows(5);
-        ethernetHeaderDataTextArea.setName("ethernetHeaderDataTextArea"); // NOI18N
-        jScrollPane2.setViewportView(ethernetHeaderDataTextArea);
+        ethernetDataTextArea.setColumns(20);
+        ethernetDataTextArea.setEditable(false);
+        ethernetDataTextArea.setFont(resourceMap.getFont("ethernetDataTextArea.font")); // NOI18N
+        ethernetDataTextArea.setRows(5);
+        ethernetDataTextArea.setName("ethernetDataTextArea"); // NOI18N
+        jScrollPane2.setViewportView(ethernetDataTextArea);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -202,12 +202,12 @@ public class PacketInformationPanel extends javax.swing.JPanel {
 
         jScrollPane3.setName("jScrollPane3"); // NOI18N
 
-        ethernetDataTextArea.setColumns(20);
-        ethernetDataTextArea.setEditable(false);
-        ethernetDataTextArea.setFont(resourceMap.getFont("ethernetHeaderDataTextArea.font")); // NOI18N
-        ethernetDataTextArea.setRows(5);
-        ethernetDataTextArea.setName("ethernetDataTextArea"); // NOI18N
-        jScrollPane3.setViewportView(ethernetDataTextArea);
+        ethernetHeaderDataTextArea.setColumns(20);
+        ethernetHeaderDataTextArea.setEditable(false);
+        ethernetHeaderDataTextArea.setFont(resourceMap.getFont("ethernetHeaderDataTextArea.font")); // NOI18N
+        ethernetHeaderDataTextArea.setRows(5);
+        ethernetHeaderDataTextArea.setName("ethernetHeaderDataTextArea"); // NOI18N
+        jScrollPane3.setViewportView(ethernetHeaderDataTextArea);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);

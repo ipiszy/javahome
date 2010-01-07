@@ -92,13 +92,9 @@ public class StandardPacketFilter extends Filter {
 				break;
 			}
 			case CONTAINS: {
-				byte[] bytes = p.getData();
-				byte[] pattern = new byte[value.length()];
-				for (int i = 0; i < value.length(); ++i) {
-					pattern[i] = (byte) value.charAt(i);
-				}
-				if (strstr(bytes, pattern) != -1)
-					return true;
+                                String packetContentStr = Analyzer.createASCII(p.getData());
+                                if (packetContentStr.contains(value))
+                                    return true;
 				break;
 
 			}
@@ -147,31 +143,5 @@ public class StandardPacketFilter extends Filter {
 			return false;
 		}
 		return true;
-	}
-
-	public static int strstr(byte[] b1, byte[] b2) {
-		boolean flag = true;
-		if (b1 != null && b2 != null) {
-			for (int i = 0; i < b1.length; i++) {
-				if (b1[i] != b2[0]) {
-					continue;
-				} else {
-					if (b1.length - i >= b2.length) {
-						for (int j = 0; j < b2.length; j++) {
-							if (b2[j] != b1[i + j]) {
-								flag = false;
-								break;
-							}
-						}
-
-						if (flag) {
-							return i;
-						}
-					}
-				}
-			}
-		}
-
-		return -1;
 	}
 }
