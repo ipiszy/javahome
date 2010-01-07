@@ -331,6 +331,9 @@ public class SnifferView extends FrameView {
 
 	@Action
 	public void saveClicked() {
+                if (!(currentPacket instanceof EthernetPacket))
+                    return;
+                EthernetPacket currentEthPacket = (EthernetPacket)currentPacket;
 		JFileChooser jfc = new JFileChooser();
 		int ret = jfc.showSaveDialog(null);
 		if (ret == JFileChooser.APPROVE_OPTION) {
@@ -338,16 +341,12 @@ public class SnifferView extends FrameView {
 			String fileName = file.getName();
 			try {
 				FileWriter headerWriter = new FileWriter(file.getAbsolutePath() + ".meta");
-				if (currentPacket instanceof EthernetPacket) {
 					headerWriter.write(Analyzer.EthernetInform((EthernetPacket)currentPacket));
-				}
 				headerWriter.close();
-				FileOutputStream headerStream = new FileOutputStream(file.getAbsolutePath() + ".header");
-				headerStream.write(currentPacket.getHeader());
-				headerStream.close();
-				FileOutputStream dataStream = new FileOutputStream(file.getAbsolutePath() + ".data");
-				dataStream.write(currentPacket.getData());
-				dataStream.close();
+				FileOutputStream stream = new FileOutputStream(file.getAbsolutePath() + ".packet");
+				stream.write(currentEthPacket.getEthernetHeader());
+				stream.write(currentEthPacket.getEthernetData());
+				stream.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
