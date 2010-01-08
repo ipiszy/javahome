@@ -9,7 +9,7 @@ import net.sourceforge.jpcap.net.Packet;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy
  */
 public class AndFilter extends Filter{
 	public Filter left;

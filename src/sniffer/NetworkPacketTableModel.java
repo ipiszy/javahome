@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy 
  */
 public class NetworkPacketTableModel extends AbstractTableModel {
 

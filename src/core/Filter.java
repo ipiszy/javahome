@@ -9,7 +9,7 @@ import net.sourceforge.jpcap.net.Packet;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy
  */
 public abstract class Filter {
 	abstract boolean isPass(Packet p);

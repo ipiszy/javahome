@@ -22,7 +22,7 @@ import net.sourceforge.jpcap.net.UDPPacket;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy
  */
 public class PacketInformationPanel extends javax.swing.JPanel {
 
