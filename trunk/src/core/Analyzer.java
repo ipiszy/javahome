@@ -57,7 +57,7 @@ public class Analyzer {
             result = result + "UDP/";
         }
         if (packet instanceof EthernetPacket) {
-            result = result + "EtherenetPacket/";
+            result = result + "EthernetPacket/";
         }
         if (!result.equals("")) {
             result = result.substring(0, result.length() - 1);
