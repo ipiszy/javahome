@@ -9,7 +9,7 @@ import net.sourceforge.jpcap.net.Packet;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy
  */
 public class OrFilter extends Filter{
 	private Filter left;

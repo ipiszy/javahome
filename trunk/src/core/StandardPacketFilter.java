@@ -13,7 +13,7 @@ import net.sourceforge.jpcap.net.UDPPacket;
 
 /**
  *
- * @author Fantasia
+ * @author ipiszy
  */
 public class StandardPacketFilter extends Filter {
 
